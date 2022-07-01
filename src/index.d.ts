@@ -17,6 +17,8 @@ export interface ExplosionProps {
   onAnimationStop?: () => void;
   onAnimationEnd?: () => void;
   testID?: string;
+  topDeltaAdjustment?: number;
+  dontAnimateOpacity?: boolean;
 }
 
 export interface ConfettiItem {

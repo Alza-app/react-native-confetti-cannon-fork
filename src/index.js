@@ -24,8 +24,8 @@ type Props = {|
   onAnimationResume?: () => void,
   onAnimationStop?: () => void,
   onAnimationEnd?: () => void,
-  testID?: string
-  topDeltaAdjustment?: number
+  testID?: string,
+  topDeltaAdjustment?: number,
   dontAnimateOpacity?: boolean
 |};
 

@@ -25,6 +25,8 @@ type Props = {|
   onAnimationStop?: () => void,
   onAnimationEnd?: () => void,
   testID?: string
+  topDeltaAdjustment?: number
+  dontAnimateOpacity?: boolean
 |};
 
 type Item = {|
@@ -178,7 +180,7 @@ class Explosion extends React.PureComponent<Props, State> {
   };
 
   render() {
-    const { origin, fadeOut } = this.props;
+    const { origin, fadeOut, topDeltaAdjustment, dontAnimateOpacity } = this.props;
     const { items } = this.state;
     const { height, width } = Dimensions.get('window');
 
@@ -191,7 +193,7 @@ class Explosion extends React.PureComponent<Props, State> {
           });
           const top = this.animation.interpolate({
             inputRange: [0, 1, 1 + item.topDelta, 2],
-            outputRange: [-origin.y, -item.topDelta * height, 0, 0]
+            outputRange: [-origin.y, -item.topDelta * height, (-item.topDelta * height) + ((topDeltaAdjustment || 0) / 2), (-item.topDelta * height) + (topDeltaAdjustment || 0)]
           });
           const rotateX = this.animation.interpolate({
             inputRange: [0, 2],
@@ -225,7 +227,7 @@ class Explosion extends React.PureComponent<Props, State> {
               color={item.color}
               containerTransform={containerTransform}
               transform={transform}
-              opacity={opacity}
+              opacity={dontAnimateOpacity ? undefined : opacity}
               key={index}
               testID={`confetti-${index + 1}`}
             />

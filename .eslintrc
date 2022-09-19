@@ -3,8 +3,20 @@
     "es6": true,
     "jest": true
   },
-  "extends": [
-    "eslint-config-i-am-meticulous/react-native"
+  "parser": "@babel/eslint-parser",
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "plugins": [
+    "import",
+    "prettier",
+    "react-hooks",
+    "react",
+    "react-native",
+    "eslint-plugin-flowtype"
   ],
   "settings": {
     "import/resolver": {

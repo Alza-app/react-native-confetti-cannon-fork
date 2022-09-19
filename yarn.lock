@@ -2555,12 +2555,12 @@ escodegen@^1.9.1:
   optionalDependencies:
     source-map "~0.6.1"
 
-eslint-config-i-am-meticulous@^11.0.0:
-  version "11.0.0"
-  resolved "https://registry.npmjs.org/eslint-config-i-am-meticulous/-/eslint-config-i-am-meticulous-11.0.0.tgz#ffc69564bef47d601472d7ad6383b0bb3f4e7f01"
-  integrity sha512-b4FDo1woc0yGpGSH7oklw/RDz8WYvMUtN5TXG0aOYsAe3oheI9q7OTcsY27aN5Y6Noj6gRQRdG+/ZjWMw3wY9g==
+eslint-config-i-am-meticulous@^12.0.0:
+  version "12.0.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-i-am-meticulous/-/eslint-config-i-am-meticulous-12.0.0.tgz#f55b99fbb27144bdded483bff9084c87510a55ac"
+  integrity sha512-g7mK2ii3NgmGpSIT5BBxBRp8xqicYzN9T23gKURvTFwkVfNf/0DSeR90URG8zWVtEP5O7jPKpoPDbrB5fSZpzQ==
   dependencies:
-    eslint-plugin-import "^2.12.0"
+    eslint-plugin-import "^2.20.1"
 
 eslint-import-resolver-node@^0.3.6:
   version "0.3.6"
@@ -2591,7 +2591,7 @@ eslint-plugin-flowtype@3.13.0:
   dependencies:
     lodash "^4.17.15"
 
-eslint-plugin-import@^2.12.0, eslint-plugin-import@^2.16.0:
+eslint-plugin-import@^2.16.0, eslint-plugin-import@^2.20.1:
   version "2.26.0"
   resolved "https://registry.yarnpkg.com/eslint-plugin-import/-/eslint-plugin-import-2.26.0.tgz#f812dc47be4f2b72b478a021605a59fc6fe8b88b"
   integrity sha512-hYfi3FXaM8WPLf4S1cikh/r4IxnO6zrhZbEGz2b660EJRbuxgpDS5gkCuYgGWg2xxh2rBuIr4Pvhve/7c31koA==

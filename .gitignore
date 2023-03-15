@@ -2,6 +2,9 @@
 #
 .DS_Store
 
+# IntelliJ
+.idea
+
 # node.js
 #
 node_modules/

@@ -1,6 +1,6 @@
 {
-  "name": "react-native-confetti-cannon",
-  "version": "1.5.2",
+  "name": "@felipecsl/react-native-confetti-cannon",
+  "version": "1.6.2",
   "description": "React Native confetti explosion and fall like iOS does.",
   "homepage": "https://github.com/vincentcatillon/react-native-confetti-cannon",
   "bugs": {
@@ -24,11 +24,12 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
-    "src",
+    "build",
     "README.md"
   ],
   "scripts": {
     "prepare": "tsc",
+    "prepublish": "tsc",
     "test": "npm run lint && npm run biuld && npm run test:unit",
     "lint": "eslint src --ext .js,.json",
     "build": "tsc",

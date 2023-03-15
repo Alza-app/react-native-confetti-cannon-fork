@@ -41,7 +41,8 @@ type Item = {
 };
 
 type State = {
-  items: Item[]
+  items: Item[];
+  showItems: boolean;
 };
 
 export const TOP_MIN = 0.7;
@@ -62,7 +63,7 @@ export const DEFAULT_EXPLOSION_SPEED = 350;
 export const DEFAULT_FALL_SPEED = 3000;
 
 class Explosion extends React.Component<Props, State> {
-  state: State = { items: [] };
+  state: State = { items: [], showItems: false };
   sequence: CompositeAnimation | null = null;
   animation: Animated.Value = new Animated.Value(0);
 
@@ -82,7 +83,11 @@ class Explosion extends React.Component<Props, State> {
     const { autoStart = true, autoStartDelay = 0 } = this.props;
 
     if (autoStart) {
-      setTimeout(this.start, autoStartDelay);
+      if (autoStartDelay) {
+        setTimeout(this.start, autoStartDelay);
+      } else {
+        this.start();
+      }
     }
   };
 
@@ -122,40 +127,43 @@ class Explosion extends React.Component<Props, State> {
   };
 
   start = (resume: boolean = false) => {
-    const {
-      explosionSpeed = DEFAULT_EXPLOSION_SPEED,
-      fallSpeed = DEFAULT_FALL_SPEED,
-      onAnimationStart,
-      onAnimationResume,
-      onAnimationEnd
-    } = this.props;
+    this.setState({ showItems: true, }, () => {
+      const {
+        explosionSpeed = DEFAULT_EXPLOSION_SPEED,
+        fallSpeed = DEFAULT_FALL_SPEED,
+        onAnimationStart,
+        onAnimationResume,
+        onAnimationEnd
+      } = this.props;
 
-    if (resume) {
-      onAnimationResume && onAnimationResume();
-    } else {
-      this.sequence = Animated.sequence([
-        Animated.timing(this.animation, { toValue: 0, duration: 0, useNativeDriver: true }),
-        Animated.timing(this.animation, {
-          toValue: 1,
-          duration: explosionSpeed,
-          easing: Easing.out(Easing.quad),
-          useNativeDriver: true
-        }),
-        Animated.timing(this.animation, {
-          toValue: 2,
-          duration: fallSpeed,
-          easing: Easing.quad,
-          useNativeDriver: true
-        }),
-      ]);
+      if (resume) {
+        onAnimationResume && onAnimationResume();
+      } else {
+        this.sequence = Animated.sequence([
+          Animated.timing(this.animation, { toValue: 0, duration: 0, useNativeDriver: true }),
+          Animated.timing(this.animation, {
+            toValue: 1,
+            duration: explosionSpeed,
+            easing: Easing.out(Easing.quad),
+            useNativeDriver: true
+          }),
+          Animated.timing(this.animation, {
+            toValue: 2,
+            duration: fallSpeed,
+            easing: Easing.quad,
+            useNativeDriver: true
+          }),
+        ]);
 
-      onAnimationStart && onAnimationStart();
-    }
-
-    this.sequence && this.sequence.start(({ finished }: EndResult) => {
-      if (finished) {
-        onAnimationEnd && onAnimationEnd();
+        onAnimationStart && onAnimationStart();
       }
+
+      this.sequence && this.sequence.start(({ finished }: EndResult) => {
+        if (finished) {
+          onAnimationEnd && onAnimationEnd();
+          this.setState({ showItems: false });
+        }
+      });
     });
   };
 
@@ -171,8 +179,11 @@ class Explosion extends React.Component<Props, State> {
 
   render() {
     const { origin, fadeOut, topDeltaAdjustment, dontAnimateOpacity } = this.props;
-    const { items } = this.state;
+    const { items, showItems } = this.state;
     const { height, width } = Dimensions.get('window');
+    if (!showItems) {
+      return null;
+    }
 
     return (
       <React.Fragment>

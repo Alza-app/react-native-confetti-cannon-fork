@@ -16,7 +16,6 @@
     "react-hooks",
     "react",
     "react-native",
-    "eslint-plugin-flowtype"
   ],
   "settings": {
     "import/resolver": {
@@ -31,17 +30,6 @@
   },
   "rules": {
     "import/no-extraneous-dependencies": "off",
-    "flowtype/no-mutable-array": "off",
-    "flowtype/require-exact-type": "off",
-    "flowtype/no-unused-expressions": "off",
-    "flowtype/no-dupe-keys": "off",
-    "flowtype/require-valid-file-annotation": [
-      "error",
-      "always",
-      {
-        "annotationStyle": "line"
-      }
-    ],
     "react/prop-types": "off",
     "react/jsx-curly-brace-presence": [
       "error",

@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "outDir": "./build",
+    "incremental": true,
+    "strict": true,
+    "declaration": true,
+    "declarationMap": true,
+    "strictNullChecks": true,
+    "skipLibCheck": true,
+    "jsx": "react-native",
+    "lib": ["ESNext"],
+    "moduleResolution": "node"
+  },
+  "include": ["./src/**/*"],
+  "exclude": ["node_modules"]
+}

@@ -1,14 +1,13 @@
-// @flow
-
 import * as React from 'react';
 import { Animated, Dimensions, Easing, Platform } from 'react-native';
-import type { CompositeAnimation } from 'react-native/Libraries/Animated/src/AnimatedImplementation';
-import type { EndResult } from 'react-native/Libraries/Animated/src/animations/Animation';
 
-import Confetti from './components/confetti';
+import Confetti, { TransformStyles } from './components/confetti';
 import { randomValue, randomColor } from './utils';
+import CompositeAnimation = Animated.CompositeAnimation;
+import EndResult = Animated.EndResult;
+import WithAnimatedArray = Animated.WithAnimatedArray;
 
-type Props = {|
+type Props = {
   count: number,
   origin: {
     x: number,
@@ -27,9 +26,9 @@ type Props = {|
   testID?: string,
   topDeltaAdjustment?: number,
   dontAnimateOpacity?: boolean
-|};
+};
 
-type Item = {|
+type Item = {
   leftDelta: number,
   topDelta: number,
   swingDelta: number,
@@ -39,14 +38,15 @@ type Item = {|
     rotateZ: number
   },
   color: string
-|};
+};
 
-type State = {|
-  items: Array<Item>
-|};
+type State = {
+  items: Item[];
+  showItems: boolean;
+};
 
 export const TOP_MIN = 0.7;
-export const DEFAULT_COLORS: Array<string> =[
+export const DEFAULT_COLORS: Array<string> = [
   '#e67e22',
   '#2ecc71',
   '#3498db',
@@ -62,16 +62,9 @@ export const DEFAULT_COLORS: Array<string> =[
 export const DEFAULT_EXPLOSION_SPEED = 350;
 export const DEFAULT_FALL_SPEED = 3000;
 
-class Explosion extends React.PureComponent<Props, State> {
-  props: Props;
-  state: State = {
-    items: []
-  };
-  start: () => void;
-  resume: () => void;
-  stop: () => void;
-  sequence: CompositeAnimation | null;
-  items: Array<Item> = [];
+class Explosion extends React.Component<Props, State> {
+  state: State = { items: [], showItems: false };
+  sequence: CompositeAnimation | null = null;
   animation: Animated.Value = new Animated.Value(0);
 
   constructor(props: Props) {
@@ -90,7 +83,11 @@ class Explosion extends React.PureComponent<Props, State> {
     const { autoStart = true, autoStartDelay = 0 } = this.props;
 
     if (autoStart) {
-      setTimeout(this.start, autoStartDelay);
+      if (autoStartDelay) {
+        setTimeout(this.start, autoStartDelay);
+      } else {
+        this.start();
+      }
     }
   };
 
@@ -107,10 +104,8 @@ class Explosion extends React.PureComponent<Props, State> {
   getItems = (prevColors: Array<string>): Array<Item> => {
     const { count, colors = DEFAULT_COLORS } = this.props;
     const { items } = this.state;
-
     const difference = items.length < count ? count - items.length : 0;
-
-    const newItems = Array(difference).fill().map((): Item => ({
+    const newItems = Array(difference).fill({}).map((): Item => ({
       leftDelta: randomValue(0, 1),
       topDelta: randomValue(TOP_MIN, 1),
       swingDelta: randomValue(0.2, 1),
@@ -131,41 +126,44 @@ class Explosion extends React.PureComponent<Props, State> {
       }));
   };
 
-  start = (resume?: boolean = false) => {
-    const {
-      explosionSpeed = DEFAULT_EXPLOSION_SPEED,
-      fallSpeed = DEFAULT_FALL_SPEED,
-      onAnimationStart,
-      onAnimationResume,
-      onAnimationEnd
-    } = this.props;
+  start = (resume: boolean = false) => {
+    this.setState({ showItems: true, }, () => {
+      const {
+        explosionSpeed = DEFAULT_EXPLOSION_SPEED,
+        fallSpeed = DEFAULT_FALL_SPEED,
+        onAnimationStart,
+        onAnimationResume,
+        onAnimationEnd
+      } = this.props;
 
-    if (resume) {
-      onAnimationResume && onAnimationResume();
-    } else {
-      this.sequence = Animated.sequence([
-        Animated.timing(this.animation, {toValue: 0, duration: 0, useNativeDriver: true}),
-        Animated.timing(this.animation, {
-          toValue: 1,
-          duration: explosionSpeed,
-          easing: Easing.out(Easing.quad),
-          useNativeDriver: true
-        }),
-        Animated.timing(this.animation, {
-          toValue: 2,
-          duration: fallSpeed,
-          easing: Easing.quad,
-          useNativeDriver: true
-        }),
-      ]);
+      if (resume) {
+        onAnimationResume && onAnimationResume();
+      } else {
+        this.sequence = Animated.sequence([
+          Animated.timing(this.animation, { toValue: 0, duration: 0, useNativeDriver: true }),
+          Animated.timing(this.animation, {
+            toValue: 1,
+            duration: explosionSpeed,
+            easing: Easing.out(Easing.quad),
+            useNativeDriver: true
+          }),
+          Animated.timing(this.animation, {
+            toValue: 2,
+            duration: fallSpeed,
+            easing: Easing.quad,
+            useNativeDriver: true
+          }),
+        ]);
 
-      onAnimationStart && onAnimationStart();
-    }
-
-    this.sequence && this.sequence.start(({finished}: EndResult) => {
-      if (finished) {
-        onAnimationEnd && onAnimationEnd();
+        onAnimationStart && onAnimationStart();
       }
+
+      this.sequence && this.sequence.start(({ finished }: EndResult) => {
+        if (finished) {
+          onAnimationEnd && onAnimationEnd();
+          this.setState({ showItems: false });
+        }
+      });
     });
   };
 
@@ -181,8 +179,11 @@ class Explosion extends React.PureComponent<Props, State> {
 
   render() {
     const { origin, fadeOut, topDeltaAdjustment, dontAnimateOpacity } = this.props;
-    const { items } = this.state;
+    const { items, showItems } = this.state;
     const { height, width } = Dimensions.get('window');
+    if (!showItems) {
+      return null;
+    }
 
     return (
       <React.Fragment>
@@ -215,8 +216,10 @@ class Explosion extends React.PureComponent<Props, State> {
             inputRange: [0, 1, 1.8, 2],
             outputRange: [1, 1, 1, fadeOut ? 0 : 1]
           });
-          const containerTransform = [{translateX: left}, {translateY: top}];
-          const transform = [{rotateX}, {rotateY}, {rotate: rotateZ}, {translateX}];
+          const containerTransform = [{ translateX: left }, { translateY: top }];
+          const transform: WithAnimatedArray<TransformStyles> = [
+            { rotateX }, { rotateY }, { rotate: rotateZ }, { translateX }
+          ];
 
           if (Platform.OS === 'android') {
             transform.push({ perspective: 100 });

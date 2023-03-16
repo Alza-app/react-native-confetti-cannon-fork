@@ -2,6 +2,9 @@
 #
 .DS_Store
 
+# IntelliJ
+.idea
+
 # node.js
 #
 node_modules/
@@ -10,3 +13,5 @@ yarn-error.log
 
 # jest
 coverage
+
+build/

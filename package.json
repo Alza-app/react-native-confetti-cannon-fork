@@ -1,5 +1,5 @@
 {
-  "name": "@felipecsl/react-native-confetti-cannon",
+  "name": "react-native-confetti-cannon",
   "version": "1.6.2",
   "description": "React Native confetti explosion and fall like iOS does.",
   "homepage": "https://github.com/vincentcatillon/react-native-confetti-cannon",

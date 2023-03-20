@@ -28,6 +28,7 @@
     "README.md"
   ],
   "scripts": {
+    "postinstall": "tsc",
     "prepublish": "tsc",
     "test": "npm run lint && npm run biuld && npm run test:unit",
     "lint": "eslint src --ext .js,.json",
